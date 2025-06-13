@@ -18,7 +18,7 @@ def compute_lps(pattern: str) -> List[int]:
                     i += 1
         return lps
 
-def kmp_search(pattern: str, text: str) -> List[int]:
+def kmp_search(pattern: str, text: str) -> int:
     lps = compute_lps(pattern)
     indices = []
     i = j = 0
@@ -38,4 +38,7 @@ def kmp_search(pattern: str, text: str) -> List[int]:
                 i += 1
 
     # Mengembalikan daftar indeks semua kemunculan pola dalam teks.
-    return indices 
+    # return indices 
+
+    return len(indices)  # Mengembalikan jumlah kemunculan pola dalam teks.
+
