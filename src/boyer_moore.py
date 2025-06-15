@@ -1,6 +1,7 @@
 from string import printable
 
 def boyer_moore(text: str, pattern: str):
+    # start
     p = len(pattern)
     t = len(text)
 
