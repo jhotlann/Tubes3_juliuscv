@@ -751,12 +751,9 @@ def get_paths():
     cursor.execute("USE Tubes3Stima")
 
     cursor.execute("""
-                    SELECT applicant_id, cv_path FROM applicationdetail;                 
+                    SELECT ad.applicant_id,  ap.first_name, ap.last_name, ad.cv_path FROM applicationdetail as ad JOIN applicantprofile as ap on ad.applicant_id = ap.applicant_id;                 
                     """)
     
     res = cursor.fetchall()
-    # for i in res:
-    #     if (i["applicant_id"] == 20):
 
-    #         print(i["applicant_id"])
-    #         print(i["cv_path"])
+    return res
