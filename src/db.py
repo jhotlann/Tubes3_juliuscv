@@ -4,7 +4,7 @@ def get_db_connection():
     db = mysql.connector.connect(
         host = "localhost",
         user = "root",
-        password = ""
+        password = "julius"
     )
     return db
 
@@ -741,3 +741,22 @@ def create_db() :
 
     db_connection.close()
 
+def get_paths():
+    # return dict("id", path)
+
+    db_connection = get_db_connection()
+    cursor = db_connection.cursor(dictionary=True)
+
+
+    cursor.execute("USE Tubes3Stima")
+
+    cursor.execute("""
+                    SELECT applicant_id, cv_path FROM applicationdetail;                 
+                    """)
+    
+    res = cursor.fetchall()
+    # for i in res:
+    #     if (i["applicant_id"] == 20):
+
+    #         print(i["applicant_id"])
+    #         print(i["cv_path"])
