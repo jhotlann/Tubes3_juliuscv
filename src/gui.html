@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JULIUSCV - Applicant Tracking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2647d8 0%, #7357e3 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            transition: all 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .title {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2647d8 0%, #7357e3 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            font-style: italic;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.5s forwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .search-form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .keywords-input {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        .keywords-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .algorithm-group {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .algorithm-group:hover {
+            border-color: rgba(102, 126, 234, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.7);
+        }
+
+        .radio-option:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: scale(1.05);
+        }
+
+        .radio-option input[type="radio"] {
+            margin-right: 8px;
+            transform: scale(1.2);
+        }
+
+        .matches-selector {
+            background: rgba(118, 75, 162, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .matches-selector:hover {
+            border-color: rgba(118, 75, 162, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .select-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            background: rgba(255, 255, 255, 0.9);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .select-input:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 0 3px rgba(118, 75, 162, 0.1);
+        }
+
+        .search-button {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #2647d8 0%, #7357e3 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .search-button:hover::before {
+            left: 100%;
+        }
+
+        .search-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-button:active {
+            transform: translateY(-1px);
+        }
+
+        .results-section {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results-section.show {
+            display: block;
+            animation: slideInUp 0.5s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-result {
+            background: linear-gradient(135deg, #4a13ee 0%, #327cd8 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(79, 172, 254, 0.3);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-height: 500px; 
+            overflow-y: auto;  
+            padding-right: 15px;
+        }
+
+        .cv-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cv-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .cv-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .cv-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .cv-matches {
+            background: linear-gradient(135deg, #a1daa2, #44d6c3);
+            color: rgb(61, 9, 125);
+            padding: 8px 15px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .cv-keywords {
+            margin-bottom: 20px;
+        }
+
+        .cv-keywords h4 {
+            color: #666;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .keyword-item {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin: 3px;
+            font-size: 0.85rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .cv-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-summary {
+            background: linear-gradient(135deg, #ec8b04 0%, #d7e41a 100%);
+            color: #8b4513;
+        }
+
+        .btn-summary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(252, 182, 159, 0.4);
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #2f09d6 0%, #22a1d3 100%);
+            color: #94f2fb;
+        }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(254, 214, 227, 0.4);
+        }
+
+        .summary-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .summary-modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .summary-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .summary-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .summary-name {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #0024c7, #72b7e2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .personal-info {
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .info-section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .skill-tag {
+            background: linear-gradient(135deg, #da6521, #e8c867);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .education-info, .job-info {
+            background: rgba(118, 75, 162, 0.05);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+
+        .btn-back, .btn-view-cv {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #f77c60, #fcb69f);
+            color: #8b4513;
+        }
+
+        .btn-view-cv {
+            background: linear-gradient(135deg, #595ebf, #3a9ad5);
+            color: white;
+        }
+
+        .btn-back:hover, .btn-view-cv:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .summary-content {
+                padding: 25px;
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">JULIUSCV</h1>
+            <p class="subtitle">"Discover talent that fits your company perfectly."</p>
+        </div>
+
+        <form class="search-form" id="searchForm">
+            <div class="form-group">
+                <label for="keywords" class="form-label">Keywords:</label>
+                <input 
+                    type="text" 
+                    id="keywords" 
+                    class="keywords-input" 
+                    placeholder="Enter keywords separated by commas (e.g., Python, React, SQL)"
+                    value="C++, Web Design, Data Warehouse, Informatics Engineering, SQL, Software Engineer"
+                >
+            </div>
+
+            <div class="form-row">
+                <div class="algorithm-group">
+                    <label class="form-label">Search Algorithm:</label>
+                    <div class="radio-group">
+                        <label class="radio-option">
+                            <input type="radio" name="algorithm" value="KMP" checked>
+                            <span>KMP</span>
+                        </label>
+                        <label class="radio-option">
+                            <input type="radio" name="algorithm" value="BM">
+                            <span>Boyer-Moore</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="matches-selector">
+                    <label for="topMatches" class="form-label">Top Matches:</label>
+                    <input
+                        type="number"
+                        id="topMatches"
+                        class="select-input" value="100" min="1" placeholder="Enter number of matches"
+                    >
+                </div>
+            </div>
+
+            <button type="submit" class="search-button">
+                Search
+            </button>
+        </form>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Searching CVs...</p>
+        </div>
+
+        <div class="results-section" id="resultsSection">
+            <div class="summary-result" id="summaryResult">
+                Exact Match: 100 CVs scanned in 100ms<br>
+                Fuzzy Match: 100 CVs scanned in 101ms
+            </div>
+
+            <div class="results-grid" id="resultsGrid">
+                <!-- Sample CV Cards -->
+                <div class="cv-card">
+                    <div class="cv-name">Julius Arthur</div>
+                    <div class="cv-matches">6 matches</div>
+                    <div class="cv-keywords">
+                        <h4>Matched Keywords:</h4>
+                        <span class="keyword-item">C++: 2 occurrences</span>
+                        <span class="keyword-item">Web Design: 1 occurrence</span>
+                        <span class="keyword-item">Data Warehouse: 1 occurrence</span>
+                        <span class="keyword-item">Informatics Engineering: 5 occurrences</span>
+                    </div>
+                    <div class="cv-actions">
+                        <button class="btn btn-summary" onclick="showSummary('Julius Arthur')">Summary</button>
+                        <button class="btn btn-view" onclick="viewCV('Julius Arthur')">View CV</button>
+                    </div>
+                </div>
+
+                <div class="cv-card">
+                    <div class="cv-name">Joel Hotlan Hasiholan</div>
+                    <div class="cv-matches">4 matches</div>
+                    <div class="cv-keywords">
+                        <h4>Matched Keywords:</h4>
+                        <span class="keyword-item">C++: 2 occurrences</span>
+                        <span class="keyword-item">Web Design: 1 occurrence</span>
+                        <span class="keyword-item">Data Warehouse: 1 occurrence</span>
+                        <span class="keyword-item">Informatics Engineering: 5 occurrences</span>
+                    </div>
+                    <div class="cv-actions">
+                        <button class="btn btn-summary" onclick="showSummary('Joel Hotlan Hasiholan')">Summary</button>
+                        <button class="btn btn-view" onclick="viewCV('Joel Hotlan Hasiholan')">View CV</button>
+                    </div>
+                </div>
+
+                <div class="cv-card">
+                    <div class="cv-name">Ziyan Agil Nur Ramadhan</div>
+                    <div class="cv-matches">1 match</div>
+                    <div class="cv-keywords">
+                        <h4>Matched Keywords:</h4>
+                        <span class="keyword-item">C++: 2 occurrences</span>
+                    </div>
+                    <div class="cv-actions">
+                        <button class="btn btn-summary" onclick="showSummary('Ziyan Agil Nur Ramadhan')">Summary</button>
+                        <button class="btn btn-view" onclick="viewCV('Ziyan Agil Nur Ramadhan')">View CV</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Summary Modal -->
+    <div class="summary-modal" id="summaryModal">
+        <div class="summary-content">
+            <div class="summary-header">
+                <h2 class="summary-name" id="modalName">Julius Arthur</h2>
+                <div class="personal-info">
+                    <p><strong>Birthdate:</strong> <span id="birthdate">MM-DD-YYY</span></p>
+                    <p><strong>Address:</strong> <span id="address">Jalan Ganesa No. 10</span></p>
+                    <p><strong>Phone:</strong> <span id="phone">+62-xxxx-xxxx-xxxx</span></p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3 class="section-title">Skills</h3>
+                <div class="skills-grid" id="skillsGrid">
+                    <div class="skill-tag">C++</div>
+                    <div class="skill-tag">Web Design</div>
+                    <div class="skill-tag">SQL</div>
+                    <div class="skill-tag">Python</div>
+                    <div class="skill-tag">JavaScript</div>
+                    <div class="skill-tag">React</div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3 class="section-title">Education</h3>
+                <div class="education-info">
+                    <h4>Informatics Engineering (Institut Teknologi Bandung)</h4>
+                    <p><strong>Period:</strong> 2021-2027</p>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3 class="section-title">Job History</h3>
+                <div class="job-info">
+                    <h4>Grab (2024)</h4>
+                    <ul>
+                        <li>Internship at gojek as a software engineer</li>
+                        <li>Create a data warehouse system</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-back" onclick="closeSummary()">← Back</button>
+                <button class="btn-view-cv" onclick="viewCVFromModal()">View CV</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data for demonstration
+        const sampleCVs = [
+            {
+                name: "Julius Arthur",
+                matches: 6,
+                keywords: [
+                    { keyword: "C++", count: 2 },
+                    { keyword: "Web Design", count: 1 },
+                    { keyword: "Data Warehouse", count: 1 },
+                    { keyword: "Informatics Engineering", count: 5 }
+                ],
+                summary: {
+                    birthdate: "15-03-1999",
+                    address: "Jalan Ganesa No. 10, Bandung",
+                    phone: "+62-8123-4567-8900",
+                    skills: ["C++", "Web Design", "SQL", "Python", "JavaScript", "React"],
+                    education: {
+                        degree: "Informatics Engineering",
+                        institution: "Institut Teknologi Bandung",
+                        period: "2021-2027"
+                    },
+                    jobHistory: [
+                        {
+                            company: "Grab",
+                            year: "2024",
+                            positions: [
+                                "Internship at gojek as a software engineer",
+                                "Create a data warehouse system"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                name: "Joel Hotlan Hasiholan",
+                matches: 4,
+                keywords: [
+                    { keyword: "C++", count: 2 },
+                    { keyword: "Web Design", count: 1 },
+                    { keyword: "Data Warehouse", count: 1 },
+                    { keyword: "Computer Science", count: 3 }
+                ],
+                summary: {
+                    birthdate: "22-07-1998",
+                    address: "Jalan Sudirman No. 25, Jakarta",
+                    phone: "+62-8765-4321-0987",
+                    skills: ["C++", "Python", "Machine Learning", "Data Science", "Web Design"],
+                    education: {
+                        degree: "Computer Science",
+                        institution: "Universitas Indonesia",
+                        period: "2020-2024"
+                    },
+                    jobHistory: [
+                        {
+                            company: "Tokopedia",
+                            year: "2023",
+                            positions: [
+                                "Software Engineer Intern",
+                                "Backend Development"
+                            ]
+                        }
+                    ]
+                }
+            }
+        ];
+
+        let currentCV = null;
+
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            performSearch();
+        });
+
+        function performSearch() {
+            const loading = document.getElementById('loading');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            // Show loading
+            loading.classList.add('show');
+            resultsSection.classList.remove('show');
+            
+            // Simulate search delay
+            setTimeout(() => {
+                loading.classList.remove('show');
+                resultsSection.classList.add('show');
+                
+                // Update summary result with random timing
+                const exactTime = Math.floor(Math.random() * 50) + 80;
+                const fuzzyTime = exactTime + Math.floor(Math.random() * 20) + 1;
+                const totalCVs = document.getElementById('topMatches').value;
+                
+                document.getElementById('summaryResult').innerHTML = 
+                    `Exact Match: ${totalCVs} CVs scanned in ${exactTime}ms<br>Fuzzy Match: ${totalCVs} CVs scanned in ${fuzzyTime}ms`;
+                
+                // Update results
+                updateResultsGrid();
+            }, 1500);
+        }
+
+        function updateResultsGrid() {
+            const grid = document.getElementById('resultsGrid');
+            const keywords = document.getElementById('keywords').value.split(',').map(k => k.trim());
+        }
+
+        function showSummary(candidateName) {
+            const cv = sampleCVs.find(cv => cv.name === candidateName) || sampleCVs[0];
+            currentCV = cv;
+            
+            // Populate modal with CV data
+            document.getElementById('modalName').textContent = cv.name;
+            document.getElementById('birthdate').textContent = cv.summary.birthdate;
+            document.getElementById('address').textContent = cv.summary.address;
+            document.getElementById('phone').textContent = cv.summary.phone;
+            
+            // Update skills
+            const skillsGrid = document.getElementById('skillsGrid');
+            skillsGrid.innerHTML = cv.summary.skills.map(skill => 
+                `<div class="skill-tag">${skill}</div>`
+            ).join('');
+            
+            // Show modal
+            document.getElementById('summaryModal').classList.add('show');
+        }
+
+        function closeSummary() {
+            document.getElementById('summaryModal').classList.remove('show');
+        }
+
+        function viewCV(candidateName) {
+            alert(`Opening CV for ${candidateName}...`);
+            // Open the actual PDF file
+        }
+
+        function viewCVFromModal() {
+            if (currentCV) {
+                viewCV(currentCV.name);
+            }
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('summaryModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeSummary();
+            }
+        });
+
+        // Interactive animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate form elements on load
+            const formElements = document.querySelectorAll('.form-group, .algorithm-group, .matches-selector');
+            formElements.forEach((element, index) => {
+                element.style.opacity = '0';
+                element.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    element.style.transition = 'all 0.5s ease';
+                    element.style.opacity = '1';
+                    element.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
