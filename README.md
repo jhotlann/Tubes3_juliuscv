@@ -16,13 +16,13 @@
   <strong>
     <h3>Made by:</h3>
     <table align="center">
+       <tr>
+        <td>13523025</td>
+        <td>Joel Hotlan Haris Siahaan</td>
+      </tr>
       <tr>
         <td>13523030</td>
         <td>Julius Arthur</td>
-      </tr>
-      <tr>
-        <td>13523025</td>
-        <td>Joel Hotlan Haris Siahaan</td>
       </tr>
       <tr>
         <td>13622076</td>
