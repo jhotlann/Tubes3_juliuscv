@@ -14,7 +14,7 @@ from integrated_regex import IntegratedCVProcessor, CVInfo
 # Import your KMP and BM implementations
 from kmp import kmp_search
 from boyer_moore import boyer_moore_search
-from db import get_paths
+from db import get_paths, get_applicant_profile_by_id
 from LevenshteinDistance import fuzzy_search
         
 class JuliusCVApp(QMainWindow):
@@ -85,8 +85,6 @@ class Backend(QObject):
                 print("cont")
                 continue
             
-            if not cv_path.split("/")[1] == "INFORMATION-TECHNOLOGY":
-                continue
             with open(cv_path_dotdot, "r", encoding="utf-8", errors="ignore") as file:
                 print(cv_path_dotdot)
                 content = extract_pdf_to_string(cv_path_dotdot, True)
@@ -126,12 +124,17 @@ class Backend(QObject):
     @pyqtSlot(str, result='QVariant')
     def getCVSummary(self, cv_path):
         try:
+            profile = get_applicant_profile_by_id(cv_path[3:])
+            print("name: ", profile['first_name'])
             cv_info = self.processor.process_pdf(cv_path)
+
+            dob = profile.get("date_of_birth")
+
             return {
-                "name": getattr(cv_info, "name", "N/A"),
-                "birthdate": getattr(cv_info, "birthdate", "-"),
-                "address": getattr(cv_info, "address", "-"),
-                "phone": getattr(cv_info, "phone", "-"),
+                "name": f"{profile['first_name']} {profile['last_name']}",
+                "birthdate": dob.strftime("%Y-%m-%d") if dob else "-",
+                "address": profile.get("address", "-"),
+                "phone": profile.get("phone_number", "-"),
                 "skills": getattr(cv_info, "skills", []),
                 "education": getattr(cv_info, "education", []),
                 "job_history": getattr(cv_info, "job_history", [])

@@ -1,9 +1,7 @@
 import pdfplumber
 import re
-import argparse
 import os
-from typing import Optional
- 
+
 class PDFTextExtractor:
    
     def extract_text(self, pdf_path: str, clean: bool = True) -> str:
@@ -58,33 +56,11 @@ class PDFTextExtractor:
         
         return text
     
-    def extract_to_file(self, pdf_path: str, output_path: str, clean: bool = True):
-        """
-            Extract text from PDF and save to a file.
-        """
-        print(f"Extracting text from: {pdf_path}")
-        text = self.extract_text(pdf_path, clean)
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            f.write(text)
-        
-        print(f"Text extracted and saved to: {output_path}")
-        print(f"Total characters: {len(text)}")
-        print(f"Total words: {len(text.split())}")
-        return text
+    
 
-# Example usage functions
 def extract_pdf_to_string(pdf_path: str, clean: bool = True) -> str:
     """
         Extracted text as string
     """
     extractor = PDFTextExtractor()
     return extractor.extract_text(pdf_path, clean)
-
-def extract_pdf_to_file(pdf_path: str, output_path: str, clean: bool = True) -> str:
-    """ 
-        Extracted text as string
-    """
-    extractor = PDFTextExtractor()
-    return extractor.extract_to_file(pdf_path, output_path, clean)
-

@@ -834,8 +834,12 @@
                 // Education
                 const edu = summary.education || [];
                 document.getElementById("educationGrid").innerHTML =
-                    edu.map(e => `<div class="education-item">${e}</div>`).join("");
-
+                    edu.map(e => `
+                        <div class="education-item">
+                            <strong>${e.degree}</strong> in ${e.major} (${e.year})<br>
+                            ${e.university}, ${e.location}
+                        </div>
+                    `).join("");
                 // Job history
                 const jobs = summary.job_history || [];
                 document.getElementById("jobHistoryGrid").innerHTML =

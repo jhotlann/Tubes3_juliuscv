@@ -349,81 +349,131 @@ class CVRegexExtractor:
         
         return experiences
     
+    # def extract_education(self, text: str) -> List[Dict[str, str]]:
+    #     """Enhanced education extraction"""
+    #     education_section = re.search(self.section_patterns['education'], text, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+        
+    #     if not education_section:
+    #         # Try alternative pattern
+    #         alt_pattern = r'(?i)education\s*:?\s*\n(.*?)(?=\n\s*(?:experience|skills|summary|highlights|accomplishments)\s*:?\s*\n|\Z)'
+    #         education_section = re.search(alt_pattern, text, re.DOTALL | re.IGNORECASE)
+        
+    #     if not education_section:
+    #         # Fallback scan: detect education by degree keywords + institution
+    #         fallback_matches = []
+    #         for line in text.split('\n'):
+    #             line = line.strip()
+    #             if not line:
+    #                 continue
+
+    #             if 'university' in line.lower() or 'college' in line.lower():
+    #                 if any(degree in line.lower() for degree in ['b.s', 'bachelor', 'm.s', 'master', 'phd', 'doctor']):
+    #                     fallback_matches.append({
+    #                         'year': '',  # No date, fallback only
+    #                         'institution': line.split()[-3:],  # crude fallback
+    #                         'degree': line.split(':')[0] if ':' in line else '',
+    #                         'location': ''
+    #                     })
+
+    #         return fallback_matches
+        
+    #     content = education_section.group(1).strip()
+    #     education_entries = []
+        
+    #     lines = content.split('\n')
+    #     current_entry = {}
+    #     additional_courses = []
+        
+    #     for line in lines:
+    #         line = line.strip()
+    #         if not line:
+    #             continue
+            
+    #         # Check for year at the beginning of line
+    #         year_match = re.match(r'^(\d{4})', line)
+    #         if year_match:
+    #             # Save previous entry if exists
+    #             if current_entry:
+    #                 if additional_courses:
+    #                     current_entry['additional_courses'] = additional_courses
+    #                 education_entries.append(current_entry.copy())
+                
+    #             # Start new entry
+    #             current_entry = {
+    #                 'year': year_match.group(1),
+    #                 'institution': '',
+    #                 'degree': '',
+    #                 'location': ''
+    #             }
+    #             additional_courses = []
+                
+    #             # Extract institution and degree from the rest of the line
+    #             remaining = line[year_match.end():].strip()
+    #             if remaining:
+    #                 # Look for institution patterns
+    #                 institution_keywords = ['university', 'college', 'school', 'institute', 'academy', 'tech', 'career']
+    #                 degree_keywords = ['diploma', 'bachelor', 'master', 'phd', 'certificate', 'associate', 'high school']
+                    
+    #                 # Split by common separators
+    #                 parts = re.split(r'[-–,:]', remaining)
+    #                 for part in parts:
+    #                     part = part.strip()
+    #                     if any(keyword in part.lower() for keyword in institution_keywords):
+    #                         current_entry['institution'] = part
+    #                     elif any(keyword in part.lower() for keyword in degree_keywords):
+    #                         current_entry['degree'] = part
+    #                     elif re.search(r'\b[A-Z][a-z]+\s*,\s*[A-Z][A-Z]\b', part):  # State pattern
+    #                         current_entry['location'] = part
+    #         else:
+    #             # Check if it's additional course information
+    #             if 'courses in' in line.lower() or 'classes in' in line.lower() or 'basic vocational' in line.lower():
+    #                 additional_courses.append(line)
+    #             elif current_entry and not current_entry.get('degree'):
+    #                 # Might be degree information
+    #                 if any(keyword in line.lower() for keyword in ['diploma', 'bachelor', 'master', 'phd', 'certificate']):
+    #                     current_entry['degree'] = line
+        
+    #     # Don't forget the last entry
+    #     if current_entry:
+    #         if additional_courses:
+    #             current_entry['additional_courses'] = additional_courses
+    #         education_entries.append(current_entry)
+        
+    #     return education_entries
+
     def extract_education(self, text: str) -> List[Dict[str, str]]:
         """Enhanced education extraction"""
-        education_section = re.search(self.section_patterns['education'], text, re.DOTALL | re.IGNORECASE | re.MULTILINE)
+
+        education_section = re.search(
+            r"Education\s*[\n\r]*(.*?)(?=\n\s*(Skills|Certifications|Experience|Projects|$))",
+            text, re.DOTALL | re.IGNORECASE)
         
-        if not education_section:
-            # Try alternative pattern
-            alt_pattern = r'(?i)education\s*:?\s*\n(.*?)(?=\n\s*(?:experience|skills|summary|highlights|accomplishments)\s*:?\s*\n|\Z)'
-            education_section = re.search(alt_pattern, text, re.DOTALL | re.IGNORECASE)
-        
-        if not education_section:
-            return []
+        if education_section:
+            content = education_section.group(1)
+        else:
+            content = text
+
         
         content = education_section.group(1).strip()
         education_entries = []
         
-        lines = content.split('\n')
-        current_entry = {}
-        additional_courses = []
+        pattern = re.findall(
+        r"(Bachelor|Master|Ph\.?D|Doctor)[\w\s\-]*?:\s*([A-Za-z&\s]+?),\s*(\d{4})\s+([A-Z][A-Za-z\s&]+University(?: College)?|University of [A-Za-z\s]+)\s*(.*)",
+        content, re.IGNORECASE
+        )
+        results = []
+        for degree, major, year, university, location in pattern:
+            results.append({
+                "degree": degree.strip(),
+                "major": major.strip(),
+                "year": year.strip(),
+                "university": university.strip(),
+                "location": location.strip()
+            })
+
+        return results
         
-        for line in lines:
-            line = line.strip()
-            if not line:
-                continue
-            
-            # Check for year at the beginning of line
-            year_match = re.match(r'^(\d{4})', line)
-            if year_match:
-                # Save previous entry if exists
-                if current_entry:
-                    if additional_courses:
-                        current_entry['additional_courses'] = additional_courses
-                    education_entries.append(current_entry.copy())
-                
-                # Start new entry
-                current_entry = {
-                    'year': year_match.group(1),
-                    'institution': '',
-                    'degree': '',
-                    'location': ''
-                }
-                additional_courses = []
-                
-                # Extract institution and degree from the rest of the line
-                remaining = line[year_match.end():].strip()
-                if remaining:
-                    # Look for institution patterns
-                    institution_keywords = ['university', 'college', 'school', 'institute', 'academy', 'tech', 'career']
-                    degree_keywords = ['diploma', 'bachelor', 'master', 'phd', 'certificate', 'associate', 'high school']
-                    
-                    # Split by common separators
-                    parts = re.split(r'[-–,:]', remaining)
-                    for part in parts:
-                        part = part.strip()
-                        if any(keyword in part.lower() for keyword in institution_keywords):
-                            current_entry['institution'] = part
-                        elif any(keyword in part.lower() for keyword in degree_keywords):
-                            current_entry['degree'] = part
-                        elif re.search(r'\b[A-Z][a-z]+\s*,\s*[A-Z][A-Z]\b', part):  # State pattern
-                            current_entry['location'] = part
-            else:
-                # Check if it's additional course information
-                if 'courses in' in line.lower() or 'classes in' in line.lower() or 'basic vocational' in line.lower():
-                    additional_courses.append(line)
-                elif current_entry and not current_entry.get('degree'):
-                    # Might be degree information
-                    if any(keyword in line.lower() for keyword in ['diploma', 'bachelor', 'master', 'phd', 'certificate']):
-                        current_entry['degree'] = line
         
-        # Don't forget the last entry
-        if current_entry:
-            if additional_courses:
-                current_entry['additional_courses'] = additional_courses
-            education_entries.append(current_entry)
-        
-        return education_entries
     
     def extract_cv_info(self, file_path: str) -> CVInfo:
         """Main method to extract all CV information with improved parsing"""
