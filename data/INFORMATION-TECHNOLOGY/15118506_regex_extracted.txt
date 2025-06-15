@@ -1,0 +1,34 @@
+Director Of Information Technology
+
+Accomplishments
+
+Leadership Skills:
+Led committee to successfully changeÂ our organization's dealership management system (DMS).Â The DMS is similar to an ERP system
+for auto dealerships
+Charged with maintaining compliance and security for customer data. Successfully manage data sharing relationships with more than ten third
+party vendors. Worked closely with DMS provider to develop an acceptable secure data sharing platform. Project Management:
+Currently managing the conversion of the dealership to a newÂ dealership management system.Â Created and ran sub-committees,
+mapped out and executed the conversion plan, responsible for many key process changes and workflowsÂ
+Served as project manager for project creating a paperless work flow and digital storage process which resulted in 50% reduction of
+administrative processing time, $30,000/year reduction in costs, while increasing document availability and storage accuracy.
+As project manager, developed Smart Motors domain environment including group policy, DNS, multiple domain controllers, and OU
+structure.
+Managed email conversion project, deploying Smart Motors' on-site Exchange server. Converted existing email accounts from non-
+Exchange and provide access via Outlook Web App and mobile phone connectionsÂ
+Served as project manager on several projects developing Smart Motors' virtual environment, including 5 esxi hosts separated into two
+resource pools, vCenter, Horizon View for 120 users utilizing 2 view connection servers and a security server
+Installed and mange TrendMicro agentless security for VMware View
+Staff Development:
+Frequently met one on one with staff to determine motivation and goals. Guided staff in creation of goals and the pursuit there of
+Presented daily topics in morning meetings to inform and reinforce company core values such as commitment to quality, customer
+satisfaction, and continuous improvment
+Developed and implemented a training program for new employees, providing them with the technology skills necessary for efficient and
+successful use of company technology tools
+Operations Management:
+Managed the infrastructure to support 260 users selling 500 vehicles and servicing 7,000Â vehicles each month
+Handled all technology vendor interactions including contract negotiations, SLA monitoring, and license utilization
+Education
+Bachelor of Science : Management Information Systems Cardinal Stritch University City , State
+Online Profile
+LinkedIn
+www.linkedin.com/in/RobertRJordan Â
