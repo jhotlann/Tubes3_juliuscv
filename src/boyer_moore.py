@@ -27,7 +27,7 @@ def boyer_moore(text: str, pattern: str):
                     j -= 1
                     i -= 1
             else:
-                i += p - min(last_occurrence[text[i]] + 1, j)
+                i += p - min(last_occurrence.get(text[i], -1) + 1, j)
                 j = p - 1
         return -1
     

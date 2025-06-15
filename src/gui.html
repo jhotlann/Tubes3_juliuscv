@@ -1,14 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 
-<!-- <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-<script>
-    let backend;
-    new QWebChannel(qt.webChannelTransport, function(channel) {
-        backend = channel.objects.backend;
-    });
-</script> -->
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -680,120 +672,49 @@
     <div class="summary-modal" id="summaryModal">
         <div class="summary-content">
             <div class="summary-header">
-                <h2 class="summary-name" id="modalName">Julius Arthur</h2>
-                <div class="personal-info">
-                    <p><strong>Birthdate:</strong> <span id="birthdate">MM-DD-YYY</span></p>
-                    <p><strong>Address:</strong> <span id="address">Jalan Ganesa No. 10</span></p>
-                    <p><strong>Phone:</strong> <span id="phone">+62-xxxx-xxxx-xxxx</span></p>
-                </div>
+            <h2 class="summary-name" id="modalName">CV Summary</h2>
+            <div class="personal-info">
+                <p><strong>Birthdate:</strong> <span id="birthdate">-</span></p>
+                <p><strong>Address:</strong> <span id="address">-</span></p>
+                <p><strong>Phone:</strong> <span id="phone">-</span></p>
+            </div>
             </div>
 
             <div class="info-section">
-                <h3 class="section-title">Skills</h3>
-                <div class="skills-grid" id="skillsGrid">
-                    <div class="skill-tag">C++</div>
-                    <div class="skill-tag">Web Design</div>
-                    <div class="skill-tag">SQL</div>
-                    <div class="skill-tag">Python</div>
-                    <div class="skill-tag">JavaScript</div>
-                    <div class="skill-tag">React</div>
-                </div>
+            <h3 class="section-title">Skills</h3>
+            <div class="skills-grid" id="skillsGrid"></div>
             </div>
 
             <div class="info-section">
-                <h3 class="section-title">Education</h3>
-                <div class="education-info">
-                    <h4>Informatics Engineering (Institut Teknologi Bandung)</h4>
-                    <p><strong>Period:</strong> 2021-2027</p>
-                </div>
+            <h3 class="section-title">Education</h3>
+            <div class="education-grid" id="educationGrid"></div>
             </div>
 
             <div class="info-section">
-                <h3 class="section-title">Job History</h3>
-                <div class="job-info">
-                    <h4>Grab (2024)</h4>
-                    <ul>
-                        <li>Internship at gojek as a software engineer</li>
-                        <li>Create a data warehouse system</li>
-                    </ul>
-                </div>
+            <h3 class="section-title">Job History</h3>
+            <div class="job-history-grid" id="jobHistoryGrid"></div>
             </div>
 
             <div class="modal-actions">
-                <button class="btn-back" onclick="closeSummary()">← Back</button>
-                <button class="btn-view-cv" onclick="viewCVFromModal()">View CV</button>
+            <button class="btn-back" onclick="closeSummary()">← Back</button>
+            <button class="btn-view-cv" onclick="viewCVFromModal()">View CV</button>
             </div>
         </div>
     </div>
 
-    <script>
-        // Sample data for demonstration
-        const sampleCVs = [
-            {
-                name: "Julius Arthur",
-                matches: 6,
-                keywords: [
-                    { keyword: "C++", count: 2 },
-                    { keyword: "Web Design", count: 1 },
-                    { keyword: "Data Warehouse", count: 1 },
-                    { keyword: "Informatics Engineering", count: 5 }
-                ],
-                summary: {
-                    birthdate: "15-03-1999",
-                    address: "Jalan Ganesa No. 10, Bandung",
-                    phone: "+62-8123-4567-8900",
-                    skills: ["C++", "Web Design", "SQL", "Python", "JavaScript", "React"],
-                    education: {
-                        degree: "Informatics Engineering",
-                        institution: "Institut Teknologi Bandung",
-                        period: "2021-2027"
-                    },
-                    jobHistory: [
-                        {
-                            company: "Grab",
-                            year: "2024",
-                            positions: [
-                                "Internship at gojek as a software engineer",
-                                "Create a data warehouse system"
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                name: "Joel Hotlan Hasiholan",
-                matches: 4,
-                keywords: [
-                    { keyword: "C++", count: 2 },
-                    { keyword: "Web Design", count: 1 },
-                    { keyword: "Data Warehouse", count: 1 },
-                    { keyword: "Computer Science", count: 3 }
-                ],
-                summary: {
-                    birthdate: "22-07-1998",
-                    address: "Jalan Sudirman No. 25, Jakarta",
-                    phone: "+62-8765-4321-0987",
-                    skills: ["C++", "Python", "Machine Learning", "Data Science", "Web Design"],
-                    education: {
-                        degree: "Computer Science",
-                        institution: "Universitas Indonesia",
-                        period: "2020-2024"
-                    },
-                    jobHistory: [
-                        {
-                            company: "Tokopedia",
-                            year: "2023",
-                            positions: [
-                                "Software Engineer Intern",
-                                "Backend Development"
-                            ]
-                        }
-                    ]
-                }
-            }
-        ];
 
+
+    <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+    <script>
+        let backend;
+        new QWebChannel(qt.webChannelTransport, function(channel) {
+            backend = channel.objects.backend;
+        });
+    </script>
+
+    <script>
         let currentCV = null;
+        let lastCVPath = "";
 
         document.getElementById('searchForm').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -804,27 +725,51 @@
             
             const loading = document.getElementById('loading');
             const resultsSection = document.getElementById('resultsSection');
+            const keywords = document.getElementById('keywords').value;
+            const algorithm = document.querySelector('input[name="algorithm"]:checked').value;
+            const topN = parseInt(document.getElementById('topMatches').value);
             
-            // Show loading
             loading.classList.add('show');
             resultsSection.classList.remove('show');
-            
-            // Simulate search delay
-            setTimeout(() => {
+            const start = performance.now();
+
+             backend.searchCVs(keywords, algorithm, topN, function(results) {
+                const duration = performance.now() - start;
                 loading.classList.remove('show');
                 resultsSection.classList.add('show');
-                
-                // Update summary result with random timing
-                const exactTime = Math.floor(Math.random() * 50) + 80;
-                const fuzzyTime = exactTime + Math.floor(Math.random() * 20) + 1;
-                const totalCVs = document.getElementById('topMatches').value;
-                
-                document.getElementById('summaryResult').innerHTML = 
-                    `Exact Match: ${totalCVs} CVs scanned in ${exactTime}ms<br>Fuzzy Match: ${totalCVs} CVs scanned in ${fuzzyTime}ms`;
-                
-                // Update results
-                updateResultsGrid();
-            }, 1500);
+
+                const usedFuzzy = results.some(r => r.fuzzy);
+
+                // Show summary
+                document.getElementById('summaryResult').innerHTML =
+                    `${results.length} CVs matched using ${algorithm}` + (usedFuzzy ? " (fuzzy match used)" : "") + ` in ${Math.round(duration)}ms`;
+
+                // Populate results
+                const grid = document.getElementById('resultsGrid');
+                grid.innerHTML = ""; // Clear old results
+
+                results.forEach(cv => {
+                    const card = document.createElement('div');
+                    card.className = 'cv-card';
+
+                    const safePath = cv.cv_path.replace(/\\/g, '/');
+
+
+                    card.innerHTML = `
+                        <div class="cv-name">${cv.name}</div>
+                        <div class="cv-matches">${cv.matches} matches</div>
+                        <div class="cv-keywords">
+                            <h4>Matched Keywords:</h4>
+                            ${cv.keywords.map(k => `<span class="keyword-item">${k.keyword}: ${k.count} occurrences</span>`).join("")}
+                        </div>
+                        <div class="cv-actions">
+                            <button class="btn btn-summary" onclick="showSummary('${safePath}')">Summary</button>
+                            <button class="btn btn-view" onclick="backend.openFile('${safePath}')">View CV</button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            });
         }
 
         function updateResultsGrid() {
@@ -832,25 +777,25 @@
             const keywords = document.getElementById('keywords').value.split(',').map(k => k.trim());
         }
 
-        function showSummary(candidateName) {
-            const cv = sampleCVs.find(cv => cv.name === candidateName) || sampleCVs[0];
-            currentCV = cv;
+        // function showSummary(candidateName) {
+        //     const cv = sampleCVs.find(cv => cv.name === candidateName) || sampleCVs[0];
+        //     currentCV = cv;
             
-            // Populate modal with CV data
-            document.getElementById('modalName').textContent = cv.name;
-            document.getElementById('birthdate').textContent = cv.summary.birthdate;
-            document.getElementById('address').textContent = cv.summary.address;
-            document.getElementById('phone').textContent = cv.summary.phone;
+        //     // Populate modal with CV data
+        //     document.getElementById('modalName').textContent = cv.name;
+        //     document.getElementById('birthdate').textContent = cv.summary.birthdate;
+        //     document.getElementById('address').textContent = cv.summary.address;
+        //     document.getElementById('phone').textContent = cv.summary.phone;
             
-            // Update skills
-            const skillsGrid = document.getElementById('skillsGrid');
-            skillsGrid.innerHTML = cv.summary.skills.map(skill => 
-                `<div class="skill-tag">${skill}</div>`
-            ).join('');
+        //     // Update skills
+        //     const skillsGrid = document.getElementById('skillsGrid');
+        //     skillsGrid.innerHTML = cv.summary.skills.map(skill => 
+        //         `<div class="skill-tag">${skill}</div>`
+        //     ).join('');
             
-            // Show modal
-            document.getElementById('summaryModal').classList.add('show');
-        }
+        //     // Show modal
+        //     document.getElementById('summaryModal').classList.add('show');
+        // }
 
         function closeSummary() {
             document.getElementById('summaryModal').classList.remove('show');
@@ -862,10 +807,48 @@
         }
 
         function viewCVFromModal() {
-            if (currentCV) {
-                viewCV(currentCV.name);
-            }
+            if (!lastCVPath) return;
+            const safePath = lastCVPath.replace(/\\/g, '/');
+            backend.openFile(safePath);
         }
+
+        function showSummary(cvPath) {
+
+            lastCVPath = cvPath
+            backend.getCVSummary(cvPath, function(summary) {
+                if (summary.error) {
+                    alert("Failed to extract summary: " + summary.error);
+                    return;
+                }
+
+                document.getElementById("modalName").textContent = summary.name || "Unknown";
+                document.getElementById("birthdate").textContent = summary.birthdate || "-";
+                document.getElementById("address").textContent = summary.address || "-";
+                document.getElementById("phone").textContent = summary.phone || "-";
+
+                // Skills
+                const skills = summary.skills || [];
+                document.getElementById("skillsGrid").innerHTML =
+                    skills.map(skill => `<div class="skill-tag">${skill}</div>`).join("");
+
+                // Education
+                const edu = summary.education || [];
+                document.getElementById("educationGrid").innerHTML =
+                    edu.map(e => `
+                        <div class="education-item">
+                            <strong>${e.degree}</strong> in ${e.major} (${e.year})<br>
+                            ${e.university}, ${e.location}
+                        </div>
+                    `).join("");
+                // Job history
+                const jobs = summary.job_history || [];
+                document.getElementById("jobHistoryGrid").innerHTML =
+                    jobs.map(j => `<div class="job-item">${j}</div>`).join("");
+
+                document.getElementById("summaryModal").classList.add("show");
+            });
+        }
+
 
         // Close modal when clicking outside
         document.getElementById('summaryModal').addEventListener('click', function(e) {

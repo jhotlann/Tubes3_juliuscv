@@ -22,6 +22,19 @@ def LevenshteinDistance(source:str, target:str):
             
     return matrix[n][m]
 
+
+def fuzzy_search(text, pattern, max_distance=2):
+    pattern_len = len(pattern)
+    match = 0
+
+    for i in range(len(text) - pattern_len + 1):
+        substring = text[i:i+pattern_len]
+        distance = LevenshteinDistance(substring, pattern)
+        if distance <= max_distance:
+            match += 1
+    
+    return match
+
 if __name__ == "__main__":
     res = LevenshteinDistance("Benyam", "Ephrem")
     print("Jarak = ", res)

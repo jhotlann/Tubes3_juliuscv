@@ -1,11 +1,16 @@
 import mysql.connector
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 def get_db_connection():
     db = mysql.connector.connect(
-        host = "localhost",
-        user = "root",
-        password = "julius"
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASSWORD")
     )
+
     return db
 
 def create_db() :
@@ -18,8 +23,11 @@ def create_db() :
     print("Database Tubes3Stima created successfully")
 
     # Select the database
-    cursor.execute("USE Tubes3Stima")
+    cursor.execute(f"USE {os.getenv('DB_NAME')}")
     print("Using database Tubes3Stima")
+
+    cursor.execute("DROP TABLE IF EXISTS ApplicationDetail;")
+    cursor.execute("DROP TABLE IF EXISTS ApplicantProfile;")
 
     # Create ApplicantProfile table
     cursor.execute("""
@@ -748,15 +756,28 @@ def get_paths():
     cursor = db_connection.cursor(dictionary=True)
 
 
-    cursor.execute("USE Tubes3Stima")
+    cursor.execute(f"USE {os.getenv('DB_NAME')}")
 
     cursor.execute("""
-                    SELECT applicant_id, cv_path FROM applicationdetail;                 
+                    SELECT ad.applicant_id,  ap.first_name, ap.last_name, ad.cv_path, ad.detail_id FROM applicationdetail as ad JOIN applicantprofile as ap on ad.applicant_id = ap.applicant_id;                 
                     """)
     
     res = cursor.fetchall()
-    # for i in res:
-    #     if (i["applicant_id"] == 20):
 
-    #         print(i["applicant_id"])
-    #         print(i["cv_path"])
+    return res
+
+def get_applicant_profile_by_id(path):
+    print("Path: ", path)
+    db = get_db_connection()
+    cursor = db.cursor(dictionary=True)
+
+    cursor.execute(f"USE {os.getenv('DB_NAME')}")
+
+    cursor.execute("""
+        SELECT ap.first_name, ap.last_name, ap.date_of_birth, ap.address, ap.phone_number, ad.cv_path
+        FROM applicantprofile AS ap
+        JOIN applicationdetail AS ad ON ap.applicant_id = ad.applicant_id
+        WHERE ad.cv_path = %s
+    """, (path,))
+
+    return cursor.fetchone()
